@@ -60,17 +60,12 @@ button{
 <body>
 
   <script>
-    // Verificar si hay sesión
-    const user = sessionStorage.getItem("user");
+  const user = sessionStorage.getItem("user");
 
-    if(user){
-      // si ya inició sesión → dashboard o lector
-      window.location.href = "index.html";
-    } else {
-      // si no → login
-      window.location.href = "login.html";
-    }
-  </script>
+  if (!user) {
+    window.location.href = "login.html";
+  }
+</script>
 
 <h2>Lector QR - TimeQRLock</h2>
 
@@ -207,7 +202,7 @@ async function iniciarCamara(){
     }
 
     await lector.start(
-  { facingMode: "environment" }, // 👈 cámara trasera
+  { facingMode: { exact: "environment" } },
   {
     fps: 10,
     qrbox: 250
