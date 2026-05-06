@@ -194,13 +194,13 @@ async function iniciarCamara(){
     }
 
     await lector.start(
-      camaras[0].id,
-      {
-        fps: 10,
-        qrbox: 250
-      },
-      procesarQR
-    );
+  { facingMode: "environment" }, // 👈 cámara trasera
+  {
+    fps: 10,
+    qrbox: 250
+  },
+  procesarQR
+);
 
     mostrar("📷 Cámara lista", true);
 
