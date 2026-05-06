@@ -1,0 +1,44 @@
+body {
+  font-family: Arial, sans-serif;   /* Fuente principal de la página */
+  min-height: 100vh;               /* Hace que el body ocupe toda la altura visible de la ventana */
+  background: #e0f7fa;             /* Color de fondo celeste claro */
+  display: flex;                   /* Convierte el body en un contenedor flexbox */
+  justify-content: center;         /* Centra horizontalmente el contenido dentro del body */
+  align-items: center;             /* Centra verticalmente el contenido dentro del body */
+  margin: 0;                       /* Elimina márgenes por defecto del navegador */
+}
+.inicio {
+  background: #fff;                /* Fondo blanco para el contenedor de inicio */
+  padding: 30px;                   /* Espaciado interno (separación entre borde y contenido) */
+  border-radius: 12px;             /* Bordes redondeados */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* Sombra alrededor del cuadro para efecto de profundidad */
+  text-align: center;              /* Centra el texto dentro del contenedor */
+  width: 320px;                    /* Ancho fijo del contenedor */
+}
+img {
+  max-width: 13rem;                /* La imagen no puede superar los 16rem de ancho (adaptable) */
+}
+h1 {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 22px;                 /* Tamaño de letra del título */
+  color: #222;                     /* Color gris oscuro del texto */
+}
+input {
+  width: 90%;                      /* El campo de texto ocupa el 90% del ancho del contenedor */
+  padding: 10px;                   /* Espaciado interno del campo de texto */
+  border-radius: 6px;              /* Bordes redondeados */
+  border: 1px solid #aaa;          /* Borde gris claro */
+}
+button {
+  width: 100%;                     /* El botón ocupa todo el ancho disponible del contenedor */
+  padding: 12px;                   /* Espaciado interno del botón */
+  background: #00796b;             /* Fondo verde azulado */
+  color: #fff;                     /* Texto blanco */
+  border-radius: 6px;              /* Bordes redondeados */
+  font-size: 1rem;                  /* Tamaño de letra normal (16px aprox) */
+  border: none;                    /* Sin borde */
+  cursor: pointer;                 /* El cursor cambia a "mano" al pasar sobre el botón */
+}
+button:hover {
+  background: #004d40;             /* Cuando el usuario pasa el mouse, el fondo se oscurece */
+}
