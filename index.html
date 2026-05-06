@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lector QR - TimeQRLock</title>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{
+  font-family:Arial,sans-serif;
+  background:#e0f7fa;
+  padding:20px;
+  text-align:center;
+}
+
+#lector{
+  margin:20px auto;
+  max-width:400px;
+}
+
+#resultados{
+  margin-top:20px;
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  max-width:400px;
+  margin-left:auto;
+  margin-right:auto;
+  box-shadow:0 2px 10px rgba(0,0,0,.1);
+  text-align:left;
+}
+
+#foto{
+  width:120px;
+  height:120px;
+  object-fit:cover;
+  border-radius:10px;
+  display:none;
+  margin:10px auto;
+}
+
+button{
+  padding:10px;
+  margin-top:15px;
+  border:none;
+  border-radius:8px;
+  background:#00796b;
+  color:white;
+  cursor:pointer;
+}
+
+.ok{color:green;font-weight:bold;}
+.fail{color:red;font-weight:bold;}
+</style>
+</head>
+<body>
+
+<h2>Lector QR - TimeQRLock</h2>
+
+<div id="lector"></div>
+
+<div id="resultados">
+  <img id="foto">
+  <p><strong>Nombre:</strong> <span id="nombre"></span></p>
+  <p><strong>Grado:</strong> <span id="grado"></span></p>
+  <p><strong>Documento:</strong> <span id="doc"></span></p>
+  <p><strong>Hora:</strong> <span id="hora"></span></p>
+  <p id="estado"></p>
+
+  <button id="btnReiniciar" style="display:none;" onclick="reiniciarLectura()">
+    Escanear siguiente QR
+  </button>
+</div>
+
+<script>
+// ================= CONFIG =================
+    const SUPABASE_URL = "https://hqwrnmnnsgbfbsadvgoc.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhxd3JubW5uc2diZmJzYWR2Z29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzNDcsImV4cCI6MjA5Mjg5MDM0N30.oTg5A5BdFtfRl499TnwOK1c9rsi6GNz5faEfD2e5LMw";
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+const clave = "timeqrlock";
+const lector = new Html5Qrcode("lector");
+
+// ================= UI =================
+function mostrar(msg, ok){
+  const estado = document.getElementById("estado");
+  estado.textContent = msg;
+  estado.className = ok ? "ok" : "fail";
+}
+
+// ================= DESCIFRAR QR =================
+function descifrarQR(qr){
+  try{
+    const bytes = CryptoJS.AES.decrypt(qr, clave);
+    const texto = bytes.toString(CryptoJS.enc.Utf8);
+    return JSON.parse(texto);
+  }catch{
+    return null;
+  }
+}
+
+// ================= BUSCAR ESTUDIANTE =================
+async function obtenerEstudiante(documento){
+  const { data, error } = await supabaseClient
+    .from("estudiantes_qr")
+    .select("*")
+    .eq("documento", documento)
+    .single();
+
+  if(error){
+    console.error(error);
+    return null;
+  }
+
+  return data;
+}
+
+// ================= GUARDAR ASISTENCIA =================
+async function guardarAsistencia(estudiante){
+  const { error } = await supabaseClient
+    .from("registros_qr")
+    .insert([{
+      nombre: estudiante.nombre,
+      grado: estudiante.grado,
+      documento: estudiante.documento,
+      foto_url: estudiante.foto_url,
+      fecha_hora: new Date().toISOString(),
+      estado: "Registro correcto"
+    }]);
+
+  if(error){
+    console.error(error);
+    return false;
+  }
+
+  return true;
+}
+
+// ================= PROCESAR QR =================
+async function procesarQR(qr){
+  await lector.stop();
+
+  const datosQR = descifrarQR(qr);
+
+  if(!datosQR || !datosQR.documento){
+    mostrar("❌ QR inválido", false);
+    return;
+  }
+
+  const estudiante = await obtenerEstudiante(datosQR.documento);
+
+  if(!estudiante){
+    mostrar("❌ Estudiante no encontrado", false);
+    return;
+  }
+
+  document.getElementById("nombre").textContent = estudiante.nombre;
+  document.getElementById("grado").textContent = estudiante.grado;
+  document.getElementById("doc").textContent = estudiante.documento;
+  document.getElementById("hora").textContent = new Date().toLocaleString();
+
+  if(estudiante.foto_url){
+    const foto = document.getElementById("foto");
+    foto.src = estudiante.foto_url;
+    foto.style.display = "block";
+  }
+
+  const ok = await guardarAsistencia(estudiante);
+
+  if(ok){
+    mostrar("✅ Asistencia registrada", true);
+  }else{
+    mostrar("❌ Error guardando asistencia", false);
+  }
+
+  document.getElementById("btnReiniciar").style.display = "block";
+}
+
+// ================= INICIAR CÁMARA =================
+async function iniciarCamara(){
+  try{
+    const camaras = await Html5Qrcode.getCameras();
+
+    if(!camaras.length){
+      mostrar("❌ No se encontró cámara", false);
+      return;
+    }
+
+    await lector.start(
+      camaras[0].id,
+      {
+        fps: 10,
+        qrbox: 250
+      },
+      procesarQR
+    );
+
+    mostrar("📷 Cámara lista", true);
+
+  }catch(error){
+    console.error(error);
+    mostrar("❌ Error iniciando cámara", false);
+  }
+}
+
+// ================= REINICIAR =================
+function reiniciarLectura(){
+  document.getElementById("btnReiniciar").style.display = "none";
+  document.getElementById("foto").style.display = "none";
+  document.getElementById("nombre").textContent = "";
+  document.getElementById("grado").textContent = "";
+  document.getElementById("doc").textContent = "";
+  document.getElementById("hora").textContent = "";
+  document.getElementById("estado").textContent = "";
+
+  iniciarCamara();
+}
+
+// ================= START =================
+iniciarCamara();
+</script>
+
+</body>
+</html>
