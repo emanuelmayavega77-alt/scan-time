@@ -59,6 +59,19 @@ button{
 </head>
 <body>
 
+  <script>
+    // Verificar si hay sesión
+    const user = sessionStorage.getItem("user");
+
+    if(user){
+      // si ya inició sesión → dashboard o lector
+      window.location.href = "lector.html";
+    } else {
+      // si no → login
+      window.location.href = "login.html";
+    }
+  </script>
+
 <h2>Lector QR - TimeQRLock</h2>
 
 <div id="lector"></div>
