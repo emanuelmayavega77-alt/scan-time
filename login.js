@@ -28,20 +28,30 @@
     }
 
       async function login() {
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-        
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
   try {
-          const user = await loginUser(email, password);
-          if (user.role === "docente") {
-            window.location.href = "index.html";
-          } else if (user.role === "estudiante") {
-            window.location.href = "opcion est.html";
-          }
-        } catch (error) {
-          alert("Error: " + error.message);
-        }
-      }
+
+    const user = await loginUser(email, password);
+
+    if (user.role.toLowerCase() === "docente") {
+
+      window.location.href = "inicio profe.html";
+
+    } else if (user.role.toLowerCase() === "estudiante") {
+
+      window.location.href = "opcion est.html";
+
+    }
+
+  } catch (error) {
+
+    alert("Error: " + error.message);
+
+  }
+}
       
 
       
