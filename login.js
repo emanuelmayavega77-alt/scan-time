@@ -36,11 +36,11 @@
 
     const user = await loginUser(email, password);
 
-    if (user.role.toLowerCase() === "docente") {
+    if (user.role === "docente") {
 
       window.location.href = "index.html";
 
-    } else if (user.role.toLowerCase() === "estudiante") {
+    } else if (user.role === "estudiante") {
 
       window.location.href = "opcion est.html";
 
