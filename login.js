@@ -34,24 +34,10 @@
 
   try {
 
-    const user = await loginUser(email, password);
-
     if (user.role === "docente") {
-
-      window.location.href = "index.html";
-
-    } else if (user.role === "estudiante") {
-
-      window.location.href = "opcion est.html";
-
-    }
-
-  } catch (error) {
-
-    alert("Error: " + error.message);
-
-  }
+  window.location.href = "index.html";
+} else if (user.role === "estudiante") {
+  window.location.href = "opcion est.html";
 }
-      
 
       
