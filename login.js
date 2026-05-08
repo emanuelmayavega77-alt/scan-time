@@ -9,12 +9,12 @@
 
     // Función para login
     // Declara una función asíncrona que recibe usuario y contraseña
-    async function loginUser(nombre, password) {
+    async function loginUser(email, password) {
       // Espera la respuesta de Supabase
       const { data, error } = await supabaseClient
         .from("users")
         .select("*")
-        .eq("nombres", nombre)
+        .eq("email", email)
         .eq("password", password)
         .single();
 
@@ -28,17 +28,20 @@
     }
 
       async function login() {
-        const nombre = document.getElementById("nombre").value;
+        const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
         
   try {
-          const user = await loginUser(nombre, password);
+          const user = await loginUser(email, password);
           if (user.role === "docente") {
-            window.location.href = "index.html";
+            window.location.href = "inicio profe.html";
           } else if (user.role === "estudiante") {
-            window.location.href = "creador qr.html";
+            window.location.href = "opcion est.html";
           }
         } catch (error) {
           alert("Error: " + error.message);
         }
       }
+      
+
+      
