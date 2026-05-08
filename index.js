@@ -6,8 +6,9 @@
 
 }
   // ================= CONFIG =================
-const SUPABASE_URL = "TU_URL";
-const SUPABASE_ANON_KEY = "TU_KEY";
+    const SUPABASE_URL = "https://hqwrnmnnsgbfbsadvgoc.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhxd3JubW5uc2diZmJzYWR2Z29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTQzNDcsImV4cCI6MjA5Mjg5MDM0N30.oTg5A5BdFtfRl499TnwOK1c9rsi6GNz5faEfD2e5LMw";
+
 
 const supabaseClient = supabase.createClient(
   SUPABASE_URL,
