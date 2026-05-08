@@ -33,7 +33,7 @@
   const password = document.getElementById("password").value;
 
   try {
-
+    const user = await loginUser(email, password);
     if (user.role === "docente") {
   window.location.href = "index.html";
 } else if (user.role === "estudiante") {
