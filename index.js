@@ -1,4 +1,3 @@
-<script>
   function logout(){
 
   sessionStorage.removeItem("user");
@@ -97,4 +96,3 @@ function reiniciarLectura() {
 
 // ================= START =================
 iniciarCamara();
-  </script>
