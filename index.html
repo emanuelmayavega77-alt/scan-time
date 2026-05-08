@@ -7,12 +7,57 @@
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="styles/lector qr.css">
+
 
 
 
 </head>
-<body>
+  style
+  body{
+  font-family:Arial,sans-serif;
+  background:#e0f7fa;
+  padding:20px;
+  text-align:center;
+}
+
+#lector{
+  margin:20px auto;
+  max-width:400px;
+}
+
+#resultados{
+  margin-top:20px;
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  max-width:400px;
+  margin-left:auto;
+  margin-right:auto;
+  box-shadow:0 2px 10px rgba(0,0,0,.1);
+  text-align:left;
+}
+
+#foto{
+  width:120px;
+  height:120px;
+  object-fit:cover;
+  border-radius:10px;
+  display:none;
+  margin:10px auto;
+}
+
+button{
+  padding:10px;
+  margin-top:15px;
+  border:none;
+  border-radius:8px;
+  background:#00796b;
+  color:white;
+  cursor:pointer;
+}
+
+.ok{color:green;font-weight:bold;}
+.fail{color:red;font-weight:bold;}
 <script>
   function logout(){
 
@@ -23,6 +68,8 @@
 }
   </script>
 
+<body>
+  
 <h2>Lector QR - Scan Time</h2>
 
 <div id="lector"></div>
