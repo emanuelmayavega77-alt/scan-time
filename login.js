@@ -34,7 +34,7 @@
   try {
           const user = await loginUser(email, password);
           if (user.role === "docente") {
-            window.location.href = "inicio profe.html";
+            window.location.href = "index.html";
           } else if (user.role === "estudiante") {
             window.location.href = "opcion est.html";
           }
