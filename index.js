@@ -1,0 +1,100 @@
+<script>
+  function logout(){
+
+  sessionStorage.removeItem("user");
+
+  window.location.href = "login.html";
+
+}
+  // ================= CONFIG =================
+const SUPABASE_URL = "TU_URL";
+const SUPABASE_ANON_KEY = "TU_KEY";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+const lector = new Html5Qrcode("lector");
+
+// ================= MOSTRAR MENSAJES =================
+function mostrar(msg, ok) {
+  const estado = document.getElementById("estado");
+  estado.textContent = msg;
+  estado.className = ok ? "ok" : "fail";
+}
+
+
+// ================= BUSCAR =================
+async function obtenerEstudiante(documento) {
+  const { data } = await supabaseClient
+    .from("estudiantes_qr")
+    .select("*")
+    .eq("documento", documento)
+    .single();
+
+  return data;
+}
+
+// ================= GUARDAR =================
+async function guardarAsistencia(est) {
+  await supabaseClient.from("registros_qr").insert([{
+    nombre: est.nombre,
+    grado: est.grado,
+    documento: est.documento,
+    foto_url: est.foto_url,
+    fecha_hora: new Date().toISOString(),
+    estado: "Registro correcto"
+  }]);
+}
+
+// ================= PROCESAR =================
+async function procesarQR(qr) {
+
+  await lector.stop();
+
+  const documento = qr;
+
+  const estudiante = await obtenerEstudiante(documento);
+
+  if (!estudiante) {
+    mostrar("❌ No encontrado", false);
+    return;
+  }
+
+  document.getElementById("nombre").textContent = estudiante.nombre;
+  document.getElementById("grado").textContent = estudiante.grado;
+  document.getElementById("doc").textContent = estudiante.documento;
+  document.getElementById("hora").textContent = new Date().toLocaleString();
+
+  if (estudiante.foto_url) {
+    document.getElementById("foto").src = estudiante.foto_url;
+    document.getElementById("foto").style.display = "block";
+  }
+
+  await guardarAsistencia(estudiante);
+
+  mostrar("✅ Asistencia registrada", true);
+
+  document.getElementById("btnReiniciar").style.display = "block";
+}
+
+// ================= CÁMARA =================
+async function iniciarCamara() {
+  await lector.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    procesarQR
+  );
+
+  mostrar("📷 Cámara lista", true);
+}
+
+// ================= REINICIAR =================
+function reiniciarLectura() {
+  location.reload();
+}
+
+// ================= START =================
+iniciarCamara();
+  </script>
