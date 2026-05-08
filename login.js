@@ -38,7 +38,7 @@
 
     if (user.role.toLowerCase() === "docente") {
 
-      window.location.href = "inicio profe.html";
+      window.location.href = "index.html";
 
     } else if (user.role.toLowerCase() === "estudiante") {
 
