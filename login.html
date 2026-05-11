@@ -4,27 +4,162 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inicio de Sesión - Scan Time</title>
+
+  <title>Login - Scan Time</title>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  <link rel="stylesheet" href="login.css" />
+
+  <style>
+
+    body{
+      font-family: Arial, sans-serif;
+      background: #e0f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login{
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,.2);
+    }
+
+    img{
+      width: 120px;
+      margin-bottom: 15px;
+    }
+
+    input{
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button{
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 6px;
+      background: #00796b;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover{
+      background: #00695c;
+    }
+
+  </style>
 
 </head>
 
 <body>
-  <div class="inicio">
-    <img src="ScanTime.svg" alt="Logo Scan Time" />
-    <h1>Inicio de Sesión</h1>
-    <form>
-      <input type="text" id="email" placeholder="Correo electronico" required />
-      <br /><br />
-      <input type="password" id="password" placeholder="Contraseña" required />
-      <br /><br />
-      <button type="button" onclick="login()"><strong>Entrar</strong></button>
-      <br><br>
 
-    </form>
+  <div class="login">
+
+    <img src="ScanTime.svg" alt="Logo">
+
+    <h2>Inicio de Sesión</h2>
+
+    <input
+      type="email"
+      id="email"
+      placeholder="Correo electrónico"
+    >
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Contraseña"
+    >
+
+    <button onclick="login()">
+      Entrar
+    </button>
+
   </div>
-  <script src="login.js"></script>
+
+  <script>
+
+    // ================= CONFIG SUPABASE =================
+
+    const SUPABASE_URL =
+      "https://hqwrnmnnsgbfbsadvgoc.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "TU_KEY_AQUI";
+
+    const supabaseClient = supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+    // ================= LOGIN =================
+
+    async function login() {
+
+      const email =
+        document.getElementById("email").value;
+
+      const password =
+        document.getElementById("password").value;
+
+      const { data, error } = await supabaseClient
+        .from("users")
+        .select("*")
+        .eq("email", email)
+        .eq("password", password);
+
+      console.log(data);
+      console.log(error);
+
+      // Si no encuentra usuario
+      if (!data || data.length === 0) {
+
+        alert("Credenciales incorrectas");
+
+        return;
+      }
+
+      // Usuario encontrado
+      const user = data[0];
+
+      // Guardar sesión
+      sessionStorage.setItem(
+        "user",
+        JSON.stringify(user)
+      );
+
+      // Redirección por rol
+      if (user.role === "docente") {
+
+        window.location.href = "index.html";
+
+      } else if (user.role === "estudiante") {
+
+        window.location.href = "opcion est.html";
+
+      } else {
+
+        alert("El usuario no tiene rol");
+
+      }
+
+    }
+
+  </script>
+
 </body>
+
 </html>
