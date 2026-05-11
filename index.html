@@ -1,81 +1,138 @@
 <!doctype html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lector QR - Scan Time</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lector QR - Scan Time</title>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
-
-
-</head>
   <style>
-  body{
-  font-family:Arial,sans-serif;
-  background:#e0f7fa;
-  padding:20px;
-  text-align:center;
-}
+    body {
+      font-family: Arial, sans-serif;
+      background: #e0f7fa;
+      padding: 20px;
+      text-align: center;
+    }
 
-#lector{
-  margin:20px auto;
-  max-width:400px;
-}
+    #lector {
+      margin: 20px auto;
+      max-width: 400px;
+    }
 
-#resultados{
-  margin-top:20px;
-  background:white;
-  padding:15px;
-  border-radius:10px;
-  max-width:400px;
-  margin-left:auto;
-  margin-right:auto;
-  box-shadow:0 2px 10px rgba(0,0,0,.1);
-  text-align:left;
-}
+    #resultados {
+      margin-top: 20px;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, .1);
+      text-align: left;
+    }
 
-#foto{
-  width:120px;
-  height:120px;
-  object-fit:cover;
-  border-radius:10px;
-  display:none;
-  margin:10px auto;
-}
+    button {
+      padding: 10px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #00796b;
+      color: white;
+      cursor: pointer;
+    }
 
-button{
-  padding:10px;
-  margin-top:15px;
-  border:none;
-  border-radius:8px;
-  background:#00796b;
-  color:white;
-  cursor:pointer;
-}
+    .ok {
+      color: green;
+      font-weight: bold;
+    }
 
-.ok{color:green;font-weight:bold;}
-.fail{color:red;font-weight:bold;}
-    </style>
+    .fail {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
 <body>
-  
-<h2>Lector QR - Scan Time</h2>
 
-<div id="lector"></div>
+  <script>
 
-<div id="resultados">
-  <p><strong>Nombre:</strong> <span id="nombre"></span></p>
-  <p><strong>Grado:</strong> <span id="grado"></span></p>
-  <p><strong>Documento:</strong> <span id="doc"></span></p>
-  <p><strong>Hora:</strong> <span id="hora"></span></p>
-  <p id="estado"></p>
+    // ================= VERIFICAR SESIÓN =================
 
-  <button id="btnReiniciar" style="display:none;" onclick="reiniciarLectura()">
-    Escanear siguiente QR
-  </button>
-</div>
+    const user = JSON.parse(sessionStorage.getItem("user"));
+
+    // Si no existe usuario
+    if (!user) {
+
+      window.location.href = "login.html";
+
+    }
+
+    // Si el usuario NO es docente
+    if (user.role !== "docente") {
+
+      window.location.href = "login.html";
+
+    }
+
+    // ================= LOGOUT =================
+
+    function logout() {
+
+      sessionStorage.removeItem("user");
+
+      window.location.href = "login.html";
+
+    }
+
+  </script>
+
+  <h2>Lector QR - Scan Time</h2>
+
+  <button onclick="logout()">Cerrar Sesión</button>
+
+  <div id="lector"></div>
+
+  <div id="resultados">
+
+    <p>
+      <strong>Nombre:</strong>
+      <span id="nombre"></span>
+    </p>
+
+    <p>
+      <strong>Grado:</strong>
+      <span id="grado"></span>
+    </p>
+
+    <p>
+      <strong>Documento:</strong>
+      <span id="doc"></span>
+    </p>
+
+    <p>
+      <strong>Hora:</strong>
+      <span id="hora"></span>
+    </p>
+
+    <p id="estado"></p>
+
+    <button
+      id="btnReiniciar"
+      style="display:none;"
+      onclick="reiniciarLectura()">
+
+      Escanear siguiente QR
+
+    </button>
+
+  </div>
+
   <script src="index.js"></script>
+
 </body>
+
 </html>
