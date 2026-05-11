@@ -4,25 +4,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Lector QR - Scan Time</title>
 
+  <!-- Librería lector QR -->
   <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    body {
+
+    body{
       font-family: Arial, sans-serif;
       background: #e0f7fa;
       padding: 20px;
       text-align: center;
     }
 
-    #lector {
+    #lector{
       margin: 20px auto;
       max-width: 400px;
     }
 
-    #resultados {
+    #resultados{
       margin-top: 20px;
       background: white;
       padding: 15px;
@@ -30,11 +35,11 @@
       max-width: 400px;
       margin-left: auto;
       margin-right: auto;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, .1);
+      box-shadow: 0 2px 10px rgba(0,0,0,.1);
       text-align: left;
     }
 
-    button {
+    button{
       padding: 10px;
       margin-top: 15px;
       border: none;
@@ -44,16 +49,18 @@
       cursor: pointer;
     }
 
-    .ok {
+    .ok{
       color: green;
       font-weight: bold;
     }
 
-    .fail {
+    .fail{
       color: red;
       font-weight: bold;
     }
+
   </style>
+
 </head>
 
 <body>
@@ -62,17 +69,18 @@
 
     // ================= VERIFICAR SESIÓN =================
 
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user =
+      JSON.parse(sessionStorage.getItem("user"));
 
-    // Si no existe usuario
-    if (!user) {
+    // Si no hay sesión
+    if(!user){
 
       window.location.href = "login.html";
 
     }
 
-    // Si el usuario NO es docente
-    if (user.role !== "docente") {
+    // Si NO es docente
+    if(user.role !== "docente"){
 
       window.location.href = "login.html";
 
@@ -80,7 +88,7 @@
 
     // ================= LOGOUT =================
 
-    function logout() {
+    function logout(){
 
       sessionStorage.removeItem("user");
 
@@ -92,10 +100,14 @@
 
   <h2>Lector QR - Scan Time</h2>
 
-  <button onclick="logout()">Cerrar Sesión</button>
+  <button onclick="logout()">
+    Cerrar sesión
+  </button>
 
+  <!-- Cámara -->
   <div id="lector"></div>
 
+  <!-- Resultados -->
   <div id="resultados">
 
     <p>
@@ -131,7 +143,197 @@
 
   </div>
 
-  <script src="index.js"></script>
+  <script>
+
+    // ================= CONFIG =================
+
+    const SUPABASE_URL =
+      "https://hqwrnmnnsgbfbsadvgoc.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "TU_KEY";
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+    // Crear lector
+    const lector =
+      new Html5Qrcode("lector");
+
+
+
+    // ================= MOSTRAR MENSAJES =================
+
+    function mostrar(msg, ok){
+
+      const estado =
+        document.getElementById("estado");
+
+      estado.textContent = msg;
+
+      estado.className =
+        ok ? "ok" : "fail";
+
+    }
+
+
+
+    // ================= BUSCAR ESTUDIANTE =================
+
+    async function obtenerEstudiante(documento){
+
+      const { data, error } =
+        await supabaseClient
+          .from("estudiantes_qr")
+          .select("*")
+          .eq("documento", documento)
+          .single();
+
+      if(error){
+
+        console.log(error);
+
+        return null;
+
+      }
+
+      return data;
+
+    }
+
+
+
+    // ================= GUARDAR ASISTENCIA =================
+
+    async function guardarAsistencia(estudiante){
+
+      const { error } =
+        await supabaseClient
+          .from("registros_qr")
+          .insert([
+            {
+              nombre: estudiante.nombre,
+              grado: estudiante.grado,
+              documento: estudiante.documento,
+              foto_url: estudiante.foto_url,
+              fecha_hora: new Date().toISOString(),
+              estado: "Registro correcto"
+            }
+          ]);
+
+      if(error){
+
+        console.log(error);
+
+      }
+
+    }
+
+
+
+    // ================= PROCESAR QR =================
+
+    async function procesarQR(qr){
+
+      // Detener cámara
+      await lector.stop();
+
+      console.log(qr);
+
+      // El QR contiene SOLO documento
+      const documento = qr;
+
+      // Buscar estudiante
+      const estudiante =
+        await obtenerEstudiante(documento);
+
+      // Si no existe
+      if(!estudiante){
+
+        mostrar("❌ No encontrado", false);
+
+        return;
+
+      }
+
+      // Mostrar datos
+      document.getElementById("nombre").textContent =
+        estudiante.nombre;
+
+      document.getElementById("grado").textContent =
+        estudiante.grado;
+
+      document.getElementById("doc").textContent =
+        estudiante.documento;
+
+      document.getElementById("hora").textContent =
+        new Date().toLocaleString();
+
+      // Guardar asistencia
+      await guardarAsistencia(estudiante);
+
+      // Mostrar mensaje
+      mostrar("✅ Asistencia registrada", true);
+
+      // Mostrar botón reiniciar
+      document.getElementById("btnReiniciar")
+        .style.display = "block";
+
+    }
+
+
+
+    // ================= INICIAR CÁMARA =================
+
+    async function iniciarCamara(){
+
+      try{
+
+        await lector.start(
+
+          { facingMode: "environment" },
+
+          {
+            fps: 10,
+            qrbox: 250
+          },
+
+          procesarQR
+
+        );
+
+        mostrar("📷 Cámara lista", true);
+
+      }catch(error){
+
+        console.log(error);
+
+        mostrar("❌ Error cámara", false);
+
+      }
+
+    }
+
+
+
+    // ================= REINICIAR =================
+
+    function reiniciarLectura(){
+
+      location.reload();
+
+    }
+
+
+
+    // ================= START =================
+
+    iniciarCamara();
+
+  </script>
 
 </body>
 
