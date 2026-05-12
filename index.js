@@ -56,7 +56,9 @@ async function procesarQR(qr) {
 
   await lector.stop();
 
-  const documento = qr;
+  const datos = JSON.parse(qr);
+
+const documento = datos.cedula;
 
   const estudiante = await obtenerEstudiante(documento);
 
