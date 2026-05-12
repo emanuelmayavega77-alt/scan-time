@@ -52,38 +52,63 @@ async function guardarAsistencia(est) {
 }
 
 // ================= PROCESAR =================
+// ================= PROCESAR =================
 async function procesarQR(qr) {
 
   await lector.stop();
 
+  console.log(qr);
+
+  // Convertir QR a objeto
   const datos = JSON.parse(qr);
 
-const documento = datos.cedula;
+  // Obtener cedula
+  const documento = datos.cedula;
 
+  // Buscar estudiante
   const estudiante = await obtenerEstudiante(documento);
 
+  // Si no existe
   if (!estudiante) {
+
     mostrar("❌ No encontrado", false);
+
     return;
   }
 
-  document.getElementById("nombre").textContent = estudiante.nombre;
-  document.getElementById("grado").textContent = estudiante.grado;
-  document.getElementById("doc").textContent = estudiante.documento;
-  document.getElementById("hora").textContent = new Date().toLocaleString();
+  // Mostrar datos
+  document.getElementById("nombre").textContent =
+    estudiante.nombre;
 
+  document.getElementById("grado").textContent =
+    estudiante.grado;
+
+  document.getElementById("doc").textContent =
+    estudiante.documento;
+
+  document.getElementById("hora").textContent =
+    new Date().toLocaleString();
+
+  // Foto
   if (estudiante.foto_url) {
-    document.getElementById("foto").src = estudiante.foto_url;
-    document.getElementById("foto").style.display = "block";
+
+    document.getElementById("foto").src =
+      estudiante.foto_url;
+
+    document.getElementById("foto").style.display =
+      "block";
   }
 
+  // Guardar asistencia
   await guardarAsistencia(estudiante);
 
+  // Mostrar mensaje
   mostrar("✅ Asistencia registrada", true);
 
-  document.getElementById("btnReiniciar").style.display = "block";
+  // Mostrar botón
+  document.getElementById("btnReiniciar")
+    .style.display = "block";
 }
-
 // ================= CÁMARA =================
 async function iniciarCamara() {
   await lector.start(
