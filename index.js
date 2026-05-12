@@ -56,14 +56,15 @@ async function guardarAsistencia(est) {
 async function procesarQR(qr) {
 
   await lector.stop();
-
   console.log(qr);
 
   // Convertir QR a objeto
   const datos = JSON.parse(qr);
+  alert(datos)
 
   // Obtener cedula
   const documento = datos.cedula;
+  alert(documento)
 
   // Buscar estudiante
   const estudiante = await obtenerEstudiante(documento);
