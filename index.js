@@ -27,7 +27,7 @@ function mostrar(msg, ok) {
 
 
 // ================= BUSCAR =================
-async function obtenerEstudiante(documento) {
+async function obtenerEstudiante(cedula) {
   const { data } = await supabaseClient
     .from("estudiantes_qr")
     .select("*")
