@@ -61,7 +61,7 @@ async function procesarQR(qr) {
   alert(datos)
 
   // Obtener cedula
-  const documento = datos.cedula;
+  const documento = datos.documento;
   alert(documento)
 
   // Buscar estudiante
