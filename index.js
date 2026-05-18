@@ -119,10 +119,18 @@ async function iniciarCamara() {
 
       {
         fps: 10,
-        qrbox: 250
+        qrbox: { width: 250, height: 250 }
       },
 
-      procesarQR
+      (decodedText) => {
+
+        procesarQR(decodedText);
+
+      },
+
+      (errorMessage) => {
+
+      }
 
     );
 
@@ -137,7 +145,6 @@ async function iniciarCamara() {
   }
 
 }
-
 // ================= REINICIAR =================
 function reiniciarLectura() {
   location.reload();
