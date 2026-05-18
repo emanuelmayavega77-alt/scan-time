@@ -58,11 +58,11 @@ async function procesarQR(qr) {
 
   // Convertir QR a objeto
   const datos = JSON.parse(qr);
-  alert(datos)
+  console.log(datos)
 
   // Obtener cedula
   const documento = datos.documento;
-  alert(documento)
+  console.log(documento)
 
   // Buscar estudiante
   const estudiante = await obtenerEstudiante(documento);
@@ -110,13 +110,32 @@ async function procesarQR(qr) {
 }
 // ================= CÁMARA =================
 async function iniciarCamara() {
-  await lector.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: 250 },
-    procesarQR
-  );
 
-  mostrar("📷 Cámara lista", true);
+  try {
+
+    await lector.start(
+
+      { facingMode: "environment" },
+
+      {
+        fps: 10,
+        qrbox: 250
+      },
+
+      procesarQR
+
+    );
+
+    mostrar("📷 Cámara lista", true);
+
+  } catch(error) {
+
+    console.log(error);
+
+    mostrar("❌ Error cámara", false);
+
+  }
+
 }
 
 // ================= REINICIAR =================
