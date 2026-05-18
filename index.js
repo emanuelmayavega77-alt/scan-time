@@ -28,6 +28,7 @@ function mostrar(msg, ok) {
 
 // ================= BUSCAR =================
 async function obtenerEstudiante(documento) {
+  console.log(documento)
   const { data } = await supabaseClient
     .from("estudiantes_qr")
     .select("*")
@@ -54,20 +55,16 @@ async function guardarAsistencia(est) {
 async function procesarQR(qr) {
 
   await lector.stop();
+
   console.log(qr);
 
-  // Convertir QR a objeto
-  const datos = JSON.parse(qr);
-  console.log(datos)
+  const documento = qr;
 
-  // Obtener cedula
-  const documento = datos.documento;
-  console.log(documento)
+  console.log(documento);
 
-  // Buscar estudiante
-  const estudiante = await obtenerEstudiante(documento);
+  const estudiante =
+    await obtenerEstudiante(documento);
 
-  // Si no existe
   if (!estudiante) {
 
     mostrar("❌ No encontrado", false);
@@ -109,6 +106,7 @@ async function procesarQR(qr) {
     .style.display = "block";
 }
 // ================= CÁMARA =================
+// ================= CÁMARA =================
 async function iniciarCamara() {
 
   try {
@@ -123,6 +121,8 @@ async function iniciarCamara() {
       },
 
       (decodedText) => {
+
+        alert(decodedText);
 
         procesarQR(decodedText);
 
