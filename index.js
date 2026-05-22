@@ -30,7 +30,7 @@ function mostrar(msg, ok) {
 async function obtenerEstudiante(documento) {
   console.log(documento)
   const { data } = await supabaseClient
-    .from("estudiantes_qr")
+    .from("users")
     .select("*")
     .eq("documento", documento)
     .single();
