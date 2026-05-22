@@ -53,7 +53,7 @@ async function guardarAsistencia(est) {
 // ================= PROCESAR =================
 // ================= PROCESAR =================
 async function procesarQR(qr) {
-
+alert("Qr detectado")
   await lector.stop();
 
   console.log(qr);
