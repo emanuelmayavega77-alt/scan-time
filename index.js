@@ -76,11 +76,11 @@ async function procesarQR(qr) {
   document.getElementById("nombre").textContent =
     estudiante.nombre;
 
-  document.getElementById("grado").textContent =
-    estudiante.grado;
+  //document.getElementById("grado").textContent =
+  //  estudiante.grado;
 
   document.getElementById("doc").textContent =
-    estudiante.documento;
+    estudiante.cedula;
 
   document.getElementById("hora").textContent =
     new Date().toLocaleString();
