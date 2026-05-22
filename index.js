@@ -122,8 +122,6 @@ async function iniciarCamara() {
 
       (decodedText) => {
 
-        alert(decodedText);
-
         procesarQR(decodedText);
 
       },
