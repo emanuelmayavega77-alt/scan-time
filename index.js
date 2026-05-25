@@ -28,12 +28,16 @@ function mostrar(msg, ok) {
 
 // ================= BUSCAR =================
 async function obtenerEstudiante(documento) {
-  console.log(documento)
-  const { data } = await supabaseClient
+
+  const { data, error } = await supabaseClient
     .from("users")
     .select("*")
     .eq("documento", documento)
+    .eq("rol", "estudiante")
     .single();
+
+  console.log(data);
+  console.log(error);
 
   return data;
 }
